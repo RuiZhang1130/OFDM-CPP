@@ -25,7 +25,8 @@ int main(void)
     
     Transmitter Tr;
     Receiver Re;
-    fftw_complex *Tr_out;
+    //fftw_complex *Tr_out;
+	float *Tr_out;
     
     Tr_out  = Tr.tran(N,init_data);
     Re.rece(N,Tr_out);
