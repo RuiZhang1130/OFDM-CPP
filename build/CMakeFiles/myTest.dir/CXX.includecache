@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/rrbb/OFDM-CPP/Rx.h
+iostream
+-
+stdlib.h
+-
+time.h
+-
+fftw3.h
+-
+
+/home/rrbb/OFDM-CPP/Tx.h
+iostream
+-
+stdlib.h
+-
+time.h
+-
+fftw3.h
+-
+math.h
+-
+
+/home/rrbb/OFDM-CPP/main.cpp
+Tx.h
+/home/rrbb/OFDM-CPP/Tx.h
+Rx.h
+/home/rrbb/OFDM-CPP/Rx.h
+iostream
+-
+stdlib.h
+-
+time.h
+-
+fftw3.h
+-
+
