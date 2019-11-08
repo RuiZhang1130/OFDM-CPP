@@ -16,7 +16,7 @@ class Transmitter
    public:
    //fftw_complex * tran(int n, int data[])
 /*float * tran(int n, int data[])*/
-	fftw_complex * tran(int n, int data[])
+	fftw_complex * tran(int n, char data[])
          {
 	    fftw_plan p;
 	    fftw_complex *in=new fftw_complex[n];
@@ -51,12 +51,12 @@ class Transmitter
 		p = fftw_plan_dft_1d(n/2, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);  //IFFT
 		fftw_execute(p);
 	    
-	    for (i=0; i<(n/2); i++)
-            {
-                cout<<"after IFFT : "<<"element No."<<i<<" "<<out[i][0]<<" "<<out[i][1]<<" "<<modu[2*i]<<" "<<modu[2*i+1]<<endl;
-	    }
-            fftw_destroy_plan(p);
-	    //return out;
+	    //for (i=0; i<(n/2); i++)
+            //{
+             //   cout<<"after IFFT : "<<"element No."<<i<<" "<<out[i][0]<<" "<<out[i][1]<<" "<<modu[2*i]<<" "<<modu[2*i+1]<<endl;
+	    //}
+            //fftw_destroy_plan(p);
+
 	return out;
 	  }
 };
