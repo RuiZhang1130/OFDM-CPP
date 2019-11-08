@@ -14,12 +14,13 @@ class Receiver
    public:
    
    //void rece(int n, fftw_complex tr_out[])
-	void rece(int n, /*float*/fftw_complex Tx_out[])
+	char * rece(int n, /*float*/fftw_complex Tx_out[])
         {
             fftw_plan q;
 	    fftw_complex *in=new fftw_complex[n];
 	    fftw_complex *out=new fftw_complex[n];
-	float *demodu = new float[2*n];
+	//float *demodu = new float[2*n];
+char *demodu = new char[2*n];
             int i;
 	/*for (i=0; i<n; i++)
 	{
@@ -53,12 +54,13 @@ class Receiver
 				demodu[2*i+1] = 0;
 		}
     
-            for (i=0; i<2*n; i++)
-            {
+           // for (i=0; i<2*n; i++)
+           // {
                  /*cout<<"after FFT (real part) : "<<"element No."<<i<<" "<<out[i][0]<<endl;*/
-		cout<<"after FFT : "<<"element No."<<i<<" "<<demodu[i]<<endl;
-            }
+		//cout<<"after FFT : "<<"element No."<<i<<" "<<demodu[i]<<endl;
+           // }
             fftw_destroy_plan(q);   
+	return demodu;
         }
 };
 
