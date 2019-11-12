@@ -46,10 +46,11 @@ int main(void)
 
 int bl=8*length;
 char data[bl];
+int i;
 
 	char *b=(char*)malloc(length* sizeof(char));
 	char *p= ImgBuffer;
-	for(int i=0;i<length;i++){
+	for(i=0;i<length;i++){
 	b[i]=(char)*p;
 data[8*i] = (b[i] & 0x80) >> 7;
 data[8*i+1] = (b[i] & 0x40) >> 6;
@@ -63,6 +64,11 @@ data[8*i+7] = (b[i] & 0x01);
 	}
 	//free(b);
 
+
+
+
+//int N= length;
+//int Ns= length/2;
 int N= bl;
 int Ns= bl/2;
 /////////////////////////////////////////////////
@@ -70,18 +76,40 @@ int Ns= bl/2;
     Receiver Re;
     //fftw_complex *Tr_out;
 	/*float *Tr_out;*/
-	fftw_complex *Tr_out=new fftw_complex[Ns];
+	//fftw_complex *Tr_out=new fftw_complex[Ns];
+//char *Tr_out=new char[N];
+//char *Re_out=new char[N];
+double *Tr_out=new double[N];
 char *Re_out=new char[N];
     
-    Tr_out = Tr.tran(N,data);
+    Tr_out = Tr.tran(Ns,data);
+
+/*int dn = 8*N; 
+char str[dn];
+for(i=0; i<N; i++){
+gvct(Tr_out[i], 8, str[]);*/
+
     Re_out = Re.rece(Ns,Tr_out);
     
     //fftw_cleanup();
+//////////////////////////////////////////////////
+//////
+//char *output =new char[length];
+//char *output = (char*)malloc(length* sizeof(char));
 char output[length];
 
 for(int j=0;j<length;j++){
 output[j]=(Re_out[8*j]<<7)|(Re_out[8*j+1]<<6)|(Re_out[8*j+2]<<5)|(Re_out[8*j+3]<<4)|(Re_out[8*j+4]<<3)|(Re_out[8*j+5]<<2)|(Re_out[8*j+6]<<1)|(Re_out[8*j+7]);}
-//////////////////////////////////////////////////
+//char *output2 = (char *)output;
+
+//cout<<data[8*12065]<<endl;
+
+//cout<<N<<endl;
+//cout<<sizeof(data)<<endl;
+//cout<<output2<<endl;
+
+
+//////////////////////////////////////
 fp=fopen("source02.jpg","wb");
 fwrite(output, length, 1, fp);
 fclose(fp);
