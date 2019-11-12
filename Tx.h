@@ -86,20 +86,35 @@ j=i%2;
 	modu[2*i+1] = -out[i][1];
 	}
 }
+//cyclic prefix
+int modu_l = 2*n;
+int cp_l1 = 2*n/4; //1/4 data
+int cp_l = modu_l+cp_l1; //total
+double *cp = new double[cp_l];
+for (i=0;i<cp_l;i++)
+{
+	if(i<cp_l1)
+	{
+	cp[i]=modu[i+modu_l];
+	}
+	else
+	{
+	cp[i]=modu[i-cp_l1];
+	}
+}
 
-	for (i=0; i<n; i++)
-            {
-                cout<<"after IFFT : "<<"element No."<<i<<" "<<out[i][0]<<" "<<out[i][1]<<" "<<modu[2*i]<<" "<<modu[2*i+1]<<endl;
-	    }
+	//for (i=0; i<n; i++)
+          //  {
+            //    cout<<"after IFFT : "<<"element No."<<i<<" "<<out[i][0]<<" "<<out[i][1]<<" "<<modu[2*i]<<" "<<modu[2*i+1]<<endl;
+	   // }
 
 
             fftw_destroy_plan(p);
 	    //return out;
-	return modu;
+	return cp;
 	  }
 };
 
 
 #endif
-
 
