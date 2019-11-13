@@ -16,7 +16,31 @@ time.h
 fftw3.h
 -
 
+/home/rrbb/OFDM-CPP/TXtoWAV.h
+iostream
+-
+stdlib.h
+-
+time.h
+-
+fftw3.h
+-
+math.h
+-
+
 /home/rrbb/OFDM-CPP/Tx.h
+iostream
+-
+stdlib.h
+-
+time.h
+-
+fftw3.h
+-
+math.h
+-
+
+/home/rrbb/OFDM-CPP/WAVtoRX.h
 iostream
 -
 stdlib.h
@@ -41,4 +65,8 @@ time.h
 -
 fftw3.h
 -
+TXtoWAV.h
+/home/rrbb/OFDM-CPP/TXtoWAV.h
+WAVtoRX.h
+/home/rrbb/OFDM-CPP/WAVtoRX.h
 
