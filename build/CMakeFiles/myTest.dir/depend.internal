@@ -3,5 +3,7 @@
 
 CMakeFiles/myTest.dir/main.cpp.o
  /home/rrbb/OFDM-CPP/Rx.h
+ /home/rrbb/OFDM-CPP/TXtoWAV.h
  /home/rrbb/OFDM-CPP/Tx.h
+ /home/rrbb/OFDM-CPP/WAVtoRX.h
  /home/rrbb/OFDM-CPP/main.cpp
