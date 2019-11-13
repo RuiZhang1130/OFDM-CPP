@@ -5,6 +5,8 @@
 #include <stdlib.h> 
 #include <time.h>
 #include <fftw3.h>
+#include "TXtoWAV.h"
+#include "WAVtoRX.h"
 
 using namespace std;
 
@@ -13,25 +15,6 @@ using namespace std;
 
 int main(void)
 {
-    /* //Generate initial data 
-    int init_data[N];
-    int i;
-
-    srand((unsigned)time(NULL)); //Generate random seeds
-    
-	//for(i=0; i<N; i++)
-    //{
-       // init_data[i]=(rand()%256)-128; //range:-128~127
-      //  cout <<"element No."<<i<<" "<< init_data[i]<<endl;
-    //}
-	
-    for(i=0; i<N; i++)
-	{
-	init_data[i]=rand()%2; //[0,1]
-	cout <<"element No."<<i<<" "<< init_data[i]<<endl;
-	}
-    */
-
 	int length;
 	FILE* fp;
 	
@@ -71,26 +54,29 @@ data[8*i+7] = (b[i] & 0x01);
 //int Ns= length/2;
 int N= bl;
 int Ns= bl/2;
+int Nw= N+(N/4);
 /////////////////////////////////////////////////
     Transmitter Tr;
     Receiver Re;
+toWAV W_wav;
+WAVto R_wav;
     //fftw_complex *Tr_out;
 	/*float *Tr_out;*/
 	//fftw_complex *Tr_out=new fftw_complex[Ns];
 //char *Tr_out=new char[N];
 //char *Re_out=new char[N];
-double *Tr_out=new double[N];
+double *Tr_out=new double[Nw];
 char *Re_out=new char[N];
+double *wav_out=new double[Nw];
     
-    Tr_out = Tr.tran(Ns,data);
+	Tr_out = Tr.tran(Ns,data);
 
-/*int dn = 8*N; 
-char str[dn];
-for(i=0; i<N; i++){
-gvct(Tr_out[i], 8, str[]);*/
+	W_wav.w_wav(Nw,Tr_out);
 
-    Re_out = Re.rece(Ns,Tr_out);
-    
+	wav_out = R_wav.r_wav();
+
+	Re_out = Re.rece(Ns,wav_out);
+
     //fftw_cleanup();
 //////////////////////////////////////////////////
 //////
