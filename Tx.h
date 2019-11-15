@@ -13,105 +13,119 @@ using namespace std;
 
 class Transmitter
 {
-   public:
-   //fftw_complex * tran(int n, int data[])
-/*float * tran(int n, int data[])*/
-	/*char*/double * tran(int n, char data[])
-         {
-	    fftw_plan p;
-	    fftw_complex *in=new fftw_complex[n];
-	    fftw_complex *out=new fftw_complex[n];
-	    //float *modu = new float[2*n];
-		//char *modu = new char[2*n];
-double *modu = new double[2*n];
+	public:
 
-            int i;
-            /*for (i=0; i<n; i++)  //read array
-            {
-                in[i][0] = data[i]; //real
-                in[i][1] = 0;  //imaginary
-            }
-            p = fftw_plan_dft_1d(n, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);  //IFFT
-            fftw_execute(p);*/
+	short * tran(int n, char data[])
+	{
+	int pt_l= 2*n+4;
+	int pt_e= pt_l-3;
+	int n2= pt_l/2;
+
+	    fftw_plan p;
+	    fftw_complex *in=new fftw_complex[n2];
+	    fftw_complex *out=new fftw_complex[n2];
+
+	double *modu = new double[pt_l];
+	int i;
             
-	    //modulation
-		/*for (i=0; i<n; i++)
-		{
-			modu[i] = 2*data[i]-1;
-		}*/
-	    /*for (i=0; i<n; i++)
-	    {
-		modu[2*i] = out[i][0];
-		modu[2*i+1] = out[i][1];
-            }*/
-		/*for (i=0; i<(n/2); i++)
-		{
-			in[i][0] = modu[2*i];
-			in[i][1] = modu[2*i+1];
-	    	}
-		p = fftw_plan_dft_1d(n/2, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);  //IFFT
-		fftw_execute(p);*/
-	    
-	    /*for (i=0; i<(n/2); i++)
-            {
-                cout<<"after IFFT : "<<"element No."<<i<<" "<<out[i][0]<<" "<<out[i][1]<<" "<<modu[2*i]<<" "<<modu[2*i+1]<<endl;
-	    }*/
 char *data2 = new char[2*n];
+char *data_pt = new char[pt_l];
 for (i=0; i<2*n; i++)
 {
-	data2[i] = 2*data[i]-1;
+	data2[i] = 2*data[i]-1;  //1->1,0->-1
 }
-for (i=0; i<n; i++)
-{
-	in[i][0] = data2[2*i];
-	in[i][1] = data2[2*i+1];
-}
-p = fftw_plan_dft_1d(n, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);  //IFFT
-fftw_execute(p);
 
+//Pilot tones
+for (i=0; i<pt_l; i++)
+{
+	if(i<2)
+	{data_pt[i]=2;}
+	else if(i>pt_e)
+	{data_pt[i]=2;}
+	else
+	{data_pt[i]=data2[i-2];}
+}
+
+
+for (i=0; i<n2; i++)
+{
+	in[i][0] = data_pt[2*i];
+	in[i][1] = data_pt[2*i+1];
+}
+
+/*for(i=0;i<10;i++)
+{
+cout<<i<<": "<<in[i][0]<<endl;
+}*/
+
+p = fftw_plan_dft_1d(n2, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);  //IFFT
+fftw_execute(p);
+/*for(i=10000;i<n2;i++)
+{
+cout<<i<<": "<<out[i][0]<<endl;
+}*/
 
 //modulation
 int j;
-for (i=0; i<n; i++)
+for (i=0; i<n2; i++)
 {
 j=i%2;
-	if(j=0)
+	if(j==0)
 	{
 	modu[2*i] = out[i][0];
 	modu[2*i+1] = out[i][1];
 	}
-	if(j=1)
+	if(j==1)
 	{
 	modu[2*i] = -out[i][0];
 	modu[2*i+1] = -out[i][1];
 	}
 }
-//cyclic prefix
-int modu_l = 2*n;
-int cp_l1 = 2*n/4; //1/4 data
-int cp_l = modu_l+cp_l1; //total
-double *cp = new double[cp_l];
-for (i=0;i<cp_l;i++)
+
+//double->short int
+short *modu_short = new short[pt_l];
+for(i=0; i<pt_l; i++)
 {
-	if(i<cp_l1)
+	modu_short[i]=short(modu[i]);
+}
+
+//Pilot tones _value
+short pt_start0 = modu_short[0];
+short pt_start1 = modu_short[1];
+short pt_end0 = modu_short[pt_l-2];
+short pt_end1 = modu_short[pt_l-1];
+
+//cyclic prefix
+//////int modu_l = 2*n2;
+int cp_l = pt_l/4; //1/4 data
+int cp_t = pt_l+cp_l; //total
+short *cp = new short[cp_t];
+for (i=0;i<cp_t;i++)
+{
+	if(i<cp_l)
 	{
-	cp[i]=modu[i+modu_l];
+	cp[i]=modu_short[i+pt_l-cp_l];
 	}
 	else
 	{
-	cp[i]=modu[i-cp_l1];
+	cp[i]=modu_short[i-cp_l];
 	}
 }
+//add pt_value
+int pt_cp_l = cp_t+4;
+short *pt_cp = new short[pt_cp_l];
 
-	//for (i=0; i<n; i++)
-          //  {
-            //    cout<<"after IFFT : "<<"element No."<<i<<" "<<out[i][0]<<" "<<out[i][1]<<" "<<modu[2*i]<<" "<<modu[2*i+1]<<endl;
-	   // }
-
+pt_cp[0] = pt_start0;
+pt_cp[1] = pt_start1;
+pt_cp[2] = pt_end0;
+pt_cp[3] = pt_end1;
+for (i=4;i<pt_cp_l;i++)
+{
+	pt_cp[i] = cp[i-4];
+}
 
             fftw_destroy_plan(p);
-	    //return out;
-	return cp;
+	return pt_cp;
 	  }
 };
 
