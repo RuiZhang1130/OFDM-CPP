@@ -15,40 +15,47 @@ class WAVto
 {
    public:
 
-double * r_wav(void)
+int data_l(void)
 {
+	int length;
 	int wav_l;
 	FILE* fp;
 	
-	fp = fopen("test.wav", "rb");
+	fp = fopen("record.wav", "rb");
+	fseek(fp, 0, SEEK_END);
+	length=ftell(fp);
+	rewind(fp);
+
+	fclose(fp);
+	wav_l=length/2;
+	return wav_l;
+}
+
+short * r_wav(void)
+{
+	int length;
+	int wav_l;
+	FILE* fp;
+	
+	fp = fopen("record.wav", "rb");
 	fseek(fp, 0, SEEK_END);
 	wav_l=ftell(fp);
 	rewind(fp);
-	
-	int wav_d = wav_l/8;
-
-	double* wavBuffer=(double*)malloc(wav_d* sizeof(double));
-	fread(wavBuffer, wav_d, 8, fp);
+	wav_l=length/2;
+	short* wavBuffer=(short*)malloc(wav_l* sizeof(short));
+	//short *wavBuffer[wav_l*sizeof(short)];
+	fread(wavBuffer, length, 1, fp);
 	fclose(fp);
 	
-	int rm_head = wav_d-6;
+	short *b=(short*)malloc(wav_l* sizeof(short));
+	short *p= wavBuffer;
 
-	//char *a=(char*)malloc(rm_head* sizeof(char));
-	double *b=(double*)malloc(rm_head* sizeof(double));
-	//double *c=(double*)malloc(data_l* sizeof(double));
-	double *p= wavBuffer;
-
-	for(int i=0;i<wav_d;i++)
+	for(int i=0;i<wav_l;i++)
 	{
-	if(i>5)  //rm 48 bytes (head+sup[4])
-		{
-		b[i-6]=(double)*p;
-		}
-	p+=sizeof(char); //1byte
+		b[i]=(short)*p;
+		p+=1;
 	}
 
-	//free(b);
-//cout<<rm_head<<endl;
 	return b;
 }
 
