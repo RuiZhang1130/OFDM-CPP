@@ -49,60 +49,58 @@ data[8*i+7] = (b[i] & 0x01);
 
 
 
-
-//int N= length;
-//int Ns= length/2;
 int N= bl;
 int Ns= bl/2;
-int Nw= N+(N/4);
+int N_pt= N+4;
+int N_cp= N_pt+(N_pt/4);
+int N_ptcp=N_cp+4;
 /////////////////////////////////////////////////
     Transmitter Tr;
     Receiver Re;
 toWAV W_wav;
 WAVto R_wav;
-    //fftw_complex *Tr_out;
-	/*float *Tr_out;*/
-	//fftw_complex *Tr_out=new fftw_complex[Ns];
-//char *Tr_out=new char[N];
-//char *Re_out=new char[N];
-double *Tr_out=new double[Nw];
+
+short *Tr_out=new short[N_ptcp];
 char *Re_out=new char[N];
-double *wav_out=new double[Nw];
+
     
 	Tr_out = Tr.tran(Ns,data);
+short pt_start0 = Tr_out[0];
+short pt_start1 = Tr_out[1];
+short pt_end0 = Tr_out[2];
+short pt_end1 = Tr_out[3];
+short *Tr_out2=new short[N_cp];
+for (i=0;i<N_cp;i++)
+{
+	Tr_out2[i] = Tr_out[i+4];
+}
 
-	W_wav.w_wav(Nw,Tr_out);
+	W_wav.w_wav(N_cp,Tr_out2);
 
+int wav_l;
+	wav_l = R_wav.data_l();
+
+short *wav_out=new short[wav_l];
 	wav_out = R_wav.r_wav();
 
-	Re_out = Re.rece(Ns,wav_out);
+	Re_out = Re.rece(N_pt,wav_l,wav_out,pt_start0,pt_start1,pt_end0,pt_end1);//Ns
 
-    //fftw_cleanup();
 //////////////////////////////////////////////////
 //////
-//char *output =new char[length];
-//char *output = (char*)malloc(length* sizeof(char));
 char output[length];
 
 for(int j=0;j<length;j++){
 output[j]=(Re_out[8*j]<<7)|(Re_out[8*j+1]<<6)|(Re_out[8*j+2]<<5)|(Re_out[8*j+3]<<4)|(Re_out[8*j+4]<<3)|(Re_out[8*j+5]<<2)|(Re_out[8*j+6]<<1)|(Re_out[8*j+7]);}
-//char *output2 = (char *)output;
-
-//cout<<data[8*12065]<<endl;
-
-//cout<<N<<endl;
-//cout<<sizeof(data)<<endl;
-//cout<<output2<<endl;
 
 
 //////////////////////////////////////
-fp=fopen("source02.jpg","wb");
+fp=fopen("output.jpg","wb");
 fwrite(output, length, 1, fp);
 fclose(fp);
 
-free(ImgBuffer);
-free(b);
-free(Re_out);
+//free(ImgBuffer);
+//free(b);
+//free(Re_out);
 
 
     return 0;
