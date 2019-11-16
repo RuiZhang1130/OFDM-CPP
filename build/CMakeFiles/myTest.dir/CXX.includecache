@@ -49,8 +49,6 @@ time.h
 -
 fftw3.h
 -
-math.h
--
 
 /home/rrbb/OFDM-CPP/main.cpp
 Tx.h
