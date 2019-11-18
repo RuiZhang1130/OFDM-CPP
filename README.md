@@ -1,5 +1,9 @@
 # OFDM-CPP
 
+## Test Video
+[![Watch the video](https://raw.githubusercontent.com/RuiZhang1130/OFDM-CPP/master/build/source01.jpg)](https://youtu.be/PCwsLIZjMCs)  
+
+
 ## How to use?
 In the `/build`, there is a picture "source01.jpg". You can use it for testing. Or choose any grayscale image you like, as long as you rename it to "source01.jpg".  
 ```
