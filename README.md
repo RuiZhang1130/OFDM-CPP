@@ -14,7 +14,7 @@ A simple two-line code is used to run the program. Then you will get a newly gen
   
 Record code:
 ```
-arecord -f S16_LE -c1 -r44100 record.wav
+arecord -f S32_LE -c1 -r44100 record.wav
 ```
 Use `Ctrl+C` to end recording.  
 Remember to save the recorded audio "record.wav" in the folder "build".
