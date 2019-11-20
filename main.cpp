@@ -5,99 +5,46 @@
 #include <stdlib.h> 
 #include <time.h>
 #include <fftw3.h>
-#include "TXtoWAV.h"
-#include "WAVtoRX.h"
 
 using namespace std;
 
+#define img_size 12066  //image size (byte)
+#define symbol_n 1     //number of symbols
+
 int main(void)
 {
-	int i;
-	int length;
-	FILE* fp;
-	
-	fp = fopen("source01.jpg", "rb"); //read image
-	fseek(fp, 0, SEEK_END);
-	length=ftell(fp);
-	rewind(fp);
-	
-	char* ImgBuffer=(char*)malloc(length* sizeof(char));
-	fread(ImgBuffer, length, 1, fp);
-	fclose(fp);
-
-	int bl=8*length; //bit stream length
-	char data[bl];
-
-	char *b=(char*)malloc(length* sizeof(char));
-	char *p= ImgBuffer;
-	
-	//char->bit
-	for(i=0;i<length;i++)
-	{
-		b[i]=(char)*p;
-		data[8*i] = (b[i] & 0x80) >> 7;
-		data[8*i+1] = (b[i] & 0x40) >> 6;
-		data[8*i+2] = (b[i] & 0x20) >> 5;
-		data[8*i+3] = (b[i] & 0x10) >> 4;
-		data[8*i+4] = (b[i] & 0x08) >> 3;
-		data[8*i+5] = (b[i] & 0x04) >> 2;
-		data[8*i+6] = (b[i] & 0x02) >> 1;
-		data[8*i+7] = (b[i] & 0x01);
-		p+=sizeof(char);
-	}
-
-
-	int N= bl;
-	int Ns= bl/2;             //length after conversion to complex
-	int N_pt= N+4;            //length after insertion of the pilot tones
-	int N_cp= N_pt+(N_pt/4);  //length after adding a cyclic prefix
-	int N_ptcp=N_cp+4;        //length after adding the fixed value of the pilot
-
 
 	Transmitter Tr;
 	Receiver Re;
-	toWAV W_wav;
-	WAVto R_wav;
 
-	short *Tr_out=new short[N_ptcp];
-	Tr_out = Tr.tran(Ns,data);
+	FILE* fh;
 
-	short pt_start0 = Tr_out[0];
-	short pt_start1 = Tr_out[1];
-	short pt_end0 = Tr_out[2];
-	short pt_end1 = Tr_out[3];
-	short *Tr_out2=new short[N_cp];
+	fh = fopen("source01.jpg", "r");
+	if(fh==NULL)
+	{
+		fclose(fh);
+		cout<<"There is no image 'source01.jpg' in this folder."<<endl;
+	}
+	else
+	{
+		fclose(fh);
+
+		Tr.tran(img_size, symbol_n);
+		cout<<"The transmitter is running successfully."<<endl;
+	}
 	
-	for (i=0;i<N_cp;i++)
+	fh = fopen("record.wav", "r");
+	if(fh==NULL)
 	{
-		Tr_out2[i] = Tr_out[i+4];
+		fclose(fh);
+		cout<<"There is no audio 'test.wav' in this folder."<<endl;
 	}
-
-	W_wav.w_wav(N_cp,Tr_out2);
-
-	int wav_l;
-	wav_l = R_wav.data_l();
-
-	short *wav_out=new short[wav_l];
-	wav_out = R_wav.r_wav();
-
-	char *Re_out=new char[N];
-	Re_out = Re.rece(N_pt,wav_l,wav_out,pt_start0,pt_start1,pt_end0,pt_end1);
-
-
-	//output image
-	char output[length];
-
-	for(int j=0;j<length;j++)
+	else
 	{
-		output[j] = (Re_out[8*j]<<7)|(Re_out[8*j+1]<<6)|(Re_out[8*j+2]<<5)|(Re_out[8*j+3]<<4)|(Re_out[8*j+4]<<3)
-				|(Re_out[8*j+5]<<2)|(Re_out[8*j+6]<<1)|(Re_out[8*j+7]);
+		fclose(fh);
+		Re.rece(img_size, symbol_n);
+		cout<<"The receiver is running successfully."<<endl;
 	}
-
-
-	fp=fopen("output.jpg","wb");
-	fwrite(output, length, 1, fp);
-	fclose(fp);
 
 	return 0;
 }
