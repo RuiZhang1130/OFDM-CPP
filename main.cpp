@@ -9,7 +9,7 @@
 using namespace std;
 
 #define img_size 12066  //image size (byte)
-#define symbol_n 1     //number of symbols
+#define symbol_n 1    //number of symbols
 
 int main(void)
 {
