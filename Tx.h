@@ -9,7 +9,7 @@
 #include <math.h>
 #include <vector>
 
-//#include <unistd.h>
+
 using namespace std;
 
 class Transmitter
@@ -72,12 +72,10 @@ class Transmitter
 		fftw_complex *data_qam = new fftw_complex[sl];		
 		fftw_complex *out = new fftw_complex[sl];
 		double *modu = new double[bbl];
-		//short *modu_short = new short[bbl];
 		int cpl = bbl/4;   //1/4 data
 		int tl = bbl+cpl;  //total length
 		double *data_cp = new double[tl];
 		vector<vector<double> > symbol_out(symbol_n, vector<double>(tl));
-		//short *symbol_out = new short[tl];
 
 
 		for(int n=0; n<symbol_n; n++)
@@ -94,7 +92,7 @@ class Transmitter
 				data_xor[k] = symbol[n][k]^rand_n[k];   //XOR
 			}
 
-			//*****************************************
+			//Baseband
 			for(k=0; k<bbl; k++)
 			{
 				bb[k] = 0;
@@ -109,11 +107,9 @@ class Transmitter
 				bb[N+k] = data_xor[k];
 			}
 			
-			//PT
+			//Pilot Tones
 			bb[N-2] = 2;
 			bb[N-1] = 0;
-			//bb[bbl-N-2] =2;
-			//bb[bbl-N-1] =0;
 			
 			//QAM
 			for(k=0; k<sl; k++)
