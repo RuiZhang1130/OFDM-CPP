@@ -24,7 +24,7 @@ class Receiver
 		FILE* fp;
 	
 		//Read record file
-		fp = fopen("record.wav", "rb");
+		fp = fopen("test.wav", "rb");
 		fseek(fp, 0, SEEK_END);
 		wav_l = ftell(fp);      //1byte
 		rewind(fp);
