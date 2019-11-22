@@ -24,7 +24,7 @@ class Receiver
 		FILE* fp;
 	
 		//Read record file
-		fp = fopen("record.wav", "rb");
+		fp = fopen("test.wav", "rb");
 		fseek(fp, 0, SEEK_END);
 		wav_l = ftell(fp);      //1byte
 		rewind(fp);
@@ -48,7 +48,7 @@ class Receiver
 
 		int cp_l = ori_ml/4;      //length of CP
 		int sl = ori_ml+cp_l;  	  //length of each symbol
-		int pos_end = wav_double-(sl*(symbol_n))+1;
+		int pos_end = wav_double-(sl*symbol_n)+1;
 		double *symbol = new double[sl];
 		double *s_decp = new double[ori_ml];
 		int demodu_l = ori_ml/2;
@@ -62,33 +62,38 @@ class Receiver
 		vector<vector<char> > s_out(symbol_n, vector<char>(demodu_l));
  
 		int pos_start; 
+		int pos_next =0;
 		int pos0 = 0;
+		int find = 0;
 
 		char chs[8];
 		double data_double[wav_double];
 	
 
-		for(n=0; n<symbol_n; n++)
-		{ 
-			do{
-				for(kk=0; kk<wav_double; kk++)
-				{
-					chs[0] = wav_data[8*kk+pos0];
-					chs[1] = wav_data[8*kk+1+pos0];
-					chs[2] = wav_data[8*kk+2+pos0];
-					chs[3] = wav_data[8*kk+3+pos0];
-					chs[4] = wav_data[8*kk+4+pos0];
-					chs[5] = wav_data[8*kk+5+pos0];
-					chs[6] = wav_data[8*kk+6+pos0];
-					chs[7] = wav_data[8*kk+7+pos0];
-					data_double[kk] = *(double*)chs; 
-				}	pos_start = 0;
+		do
+		{
+			for(kk=0; kk<wav_double; kk++)
+			{
+				chs[0] = wav_data[8*kk+pos0];
+				chs[1] = wav_data[8*kk+1+pos0];
+				chs[2] = wav_data[8*kk+2+pos0];
+				chs[3] = wav_data[8*kk+3+pos0];
+				chs[4] = wav_data[8*kk+4+pos0];
+				chs[5] = wav_data[8*kk+5+pos0];
+				chs[6] = wav_data[8*kk+6+pos0];
+				chs[7] = wav_data[8*kk+7+pos0];
+				data_double[kk] = *(double*)chs; 
+			}
+
+			for(n=0; n<symbol_n; n++)
+			{	
+				pos_start = 0;
 				do
 				{
 	
 					for(k=0; k<sl; k++)
 					{
-						symbol[k] = data_double[pos_start+k];
+						symbol[k] = data_double[pos_start+pos_next+k];
 					}
 		
 					//Decode_ Cyclic Prefix
@@ -122,6 +127,7 @@ class Receiver
 					// normalize
 					out[N-1][0] *= 1./demodu_l;
 	
+					//detectron pliot tones
 					if(out[N-1][0]==2)
 					{
 	
@@ -156,17 +162,22 @@ class Receiver
 						{
 							s_out[n][k] = de_qam[k]^rand_n[k];   
 						}
-						
+						pos_next = pos_start+sl;
+						find = 1;
 						break;
 					}
-					
-				pos_start=pos_start+1;
-				}while(pos_start<pos_end);
-		
-			pos0 = pos0+1;
-			}while(pos0<8);	
 
-		}		
+					pos_start=pos_start+1;
+				}while(pos_start<pos_end);
+			}
+
+			if(find==1)
+			{
+				break;
+			}
+			else
+			pos0 = pos0+1;
+		}while(pos0<8);		
 		
 
 		//output image
