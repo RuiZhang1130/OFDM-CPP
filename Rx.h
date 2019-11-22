@@ -24,7 +24,7 @@ class Receiver
 		FILE* fp;
 	
 		//Read record file
-		fp = fopen("test.wav", "rb");
+		fp = fopen("record.wav", "rb");
 		fseek(fp, 0, SEEK_END);
 		wav_l = ftell(fp);      //1byte
 		rewind(fp);
@@ -64,6 +64,7 @@ class Receiver
 		int pos_start; 
 		int pos_next =0;
 		int pos0 = 0;
+		int go = 0;
 		int find = 0;
 
 		char chs[8];
@@ -128,7 +129,7 @@ class Receiver
 					out[N-1][0] *= 1./demodu_l;
 	
 					//detectron pliot tones
-					if(out[N-1][0]==2)
+					if((out[N-1][0]==2)||(go==1))
 					{
 	
 						for(k=0; k<cp_l; k++)
@@ -163,6 +164,7 @@ class Receiver
 							s_out[n][k] = de_qam[k]^rand_n[k];   
 						}
 						pos_next = pos_start+sl;
+						go = 1;
 						find = 1;
 						break;
 					}
